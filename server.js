@@ -158,9 +158,11 @@ function extractMessages(html, game) {
     // Canaux avec #N
     if (text.includes('#N')) { messages.push(text); continue; }
 
-    // FIFA 4×4 : messages avec score X:Y et #T
-    if (game === 'fifa4x4' && text.match(/\d+:\d+/) && text.includes('#T')) {
-      messages.push(text); continue;
+    // FIFA 4×4 : capturer tous messages avec hashtag équipes ou score
+    if (game === 'fifa4x4') {
+      const hasTeam  = text.includes('_') && text.startsWith('#');
+      const hasScore = text.match(/\d+:\d+/) && text.includes('#T');
+      if (hasTeam || hasScore) { messages.push(text); continue; }
     }
   }
   return messages;
@@ -224,11 +226,8 @@ function parseJeu21(text) {
 // Ex: #Челси_Вулверхэмптон ⏰ 2-й тайм 5:53
 // 5:8 (2:4 3:4 ) #T13
 let fifa4x4Counter = 1000; // compteur auto pour les IDs
-const fifa4x4Seen = new Set();
 
-function parseFifa4x4(text) {
-  // Chercher le score principal X:Y (pas celui dans les parenthèses)
-  // Format: #Team1_Team2 ... SCORE:SCORE (halftime) #TX
+function parseFifa4x4(text, index) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
   let teamLine = '', scoreLine = '';
@@ -237,31 +236,37 @@ function parseFifa4x4(text) {
     if (line.match(/^\d+:\d+\s*\(/)) scoreLine = line;
   }
 
+  // Si pas de scoreLine dans ce message, chercher X:Y #TX sans parenthèse
+  if (!scoreLine) {
+    for (const line of lines) {
+      if (line.match(/\d+:\d+/) && line.includes('#T')) { scoreLine = line; break; }
+    }
+  }
+
   if (!scoreLine) return null;
 
-  // Extraire score total (ex: "6:7 (3:4 3:3 ) #T13")
-  const sm = scoreLine.match(/^(\d+):(\d+)/);
+  // Extraire score total
+  const sm = scoreLine.match(/(\d+):(\d+)/);
   if (!sm) return null;
 
   const homeGoals = parseInt(sm[1]);
   const awayGoals = parseInt(sm[2]);
   const score = `${homeGoals}:${awayGoals}`;
 
-  // Extraire équipes depuis le hashtag (ex: #Челси_Вулверхэмптон)
+  // Extraire équipes depuis le hashtag
   let home = '—', away = '—';
   if (teamLine) {
-    const teamsRaw = teamLine.replace(/^#/, '').split('_');
+    // Nettoyer le hashtag : #Челси_Вулверхэмптон ⏰ 2-й тайм 5:53
+    const cleaned = teamLine.replace(/^#/, '').split('⏰')[0].trim();
+    const teamsRaw = cleaned.split('_');
     if (teamsRaw.length >= 2) {
-      home = translateTeam(teamsRaw[0].replace(/⏰.*/, '').trim());
-      away = translateTeam(teamsRaw[1].replace(/⏰.*/, '').trim());
+      home = translateTeam(teamsRaw[0].trim());
+      away = translateTeam(teamsRaw.slice(1).join(' ').trim());
     }
   }
 
-  // Générer un ID unique basé sur le texte
-  const key = `${home}_${away}_${score}`;
-  if (fifa4x4Seen.has(key)) return null;
-  fifa4x4Seen.add(key);
-  const n = fifa4x4Counter++;
+  // ID basé sur l'index de parsing pour éviter les doublons entre cycles
+  const n = 1000 + index;
 
   return { n, home, away, score, ts: Date.now() };
 }
@@ -275,20 +280,43 @@ async function updateChannel(key, username) {
       return;
     }
 
-    const messages = extractMessages(html, key);
+    let messages = extractMessages(html, key);
+
+    // FIFA 4×4 : pairer les lignes équipes + score consécutives
+    if (key === 'fifa4x4') {
+      const paired = [];
+      for (let i = 0; i < messages.length; i++) {
+        const cur = messages[i];
+        const next = messages[i+1] || '';
+        // Si current = team hashtag et next = score
+        if (cur.startsWith('#') && cur.includes('_') && next.match(/^\d+:\d+/)) {
+          paired.push(cur + '\n' + next);
+          i++; // sauter next car déjà consommé
+        } else if (cur.match(/\d+:\d+/) && cur.includes('#T')) {
+          // Score seul (avec ou sans team dans le même message)
+          paired.push(cur);
+        } else if (cur.startsWith('#') && cur.includes('_')) {
+          // Team seule sans score suivant
+          paired.push(cur);
+        }
+      }
+      messages = paired.length > 0 ? paired : messages;
+      console.log(`[fifa4x4] ${messages.length} messages après pairing`);
+    }
 
     if (messages.length === 0) {
-      console.log(`[${key}] Aucun message #N trouvé sur t.me/s/${username}`);
+      console.log(`[${key}] Aucun message trouvé sur t.me/s/${username}`);
       return;
     }
 
     const parsed = [];
-    for (const msg of messages) {
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
       let r = null;
-      if (key === 'baccara')   r = parseBaccara(msg);
+      if (key === 'baccara')       r = parseBaccara(msg);
       else if (key === 'jeu21')    r = parseJeu21(msg);
-      else if (key === 'fifa4x4')  r = parseFifa4x4(msg);
-      else                          r = parsePenalty(msg);
+      else if (key === 'fifa4x4')  r = parseFifa4x4(msg, i);
+      else                         r = parsePenalty(msg);
       if (r) parsed.push(r);
     }
 
