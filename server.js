@@ -7,14 +7,24 @@
 const express = require('express');
 const cors    = require('cors');
 const https   = require('https');
+const path    = require('path');
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ── Servir les fichiers statiques (HTML, JS, icônes, etc.) ───
+app.use(express.static(path.join(__dirname)));
+
+// Page principale
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'betting-analyzer.html'));
+});
+
+
 // ── Configuration Telegram ───────────────────────────────────
-// Note : le BOT_TOKEN n'est pas nécessaire pour lire les canaux publics
-// via t.me/s/ — le scraping HTML suffit et évite d'exposer un token.
+const BOT_TOKEN = '8985006064:AAE6H_PyFKT3RVccTjOw3sq1N_c_xhGafjw';
 
 const CHANNELS = {
   baccara:   'statistika_baccara',
@@ -35,61 +45,30 @@ const results = {
 
 // ── Traductions équipes ──────────────────────────────────────
 const TEAMS = {
-  // ── Penalty / Jeu standard (avec espaces) ───────────────
-  'Ливерпуль': 'Liverpool',        'Арсенал': 'Arsenal',
-  'Бавария': 'Bayern',             'Реал': 'Real Madrid',
-  'Барселона': 'Barcelone',        'ПСЖ': 'PSG',
-  'Ювентус': 'Juventus',           'Манчестер Сити': 'Man City',
-  'Пьемонте Кальчо': 'Juventus',   'Манчестер Юнайтед': 'Man United',
-  'Челси': 'Chelsea',              'Атлетико': 'Atlético',
-  'Милан': 'AC Milan',             'Интер': 'Inter',
-  'Дортмунд': 'Dortmund',          'Тоттенхэм': 'Tottenham',
-  'Наполи': 'Naples',              'Севилья': 'Séville',
-  'Вильярреал': 'Villarreal',      'Бенфика': 'Benfica',
-  'Порту': 'Porto',                'Аякс': 'Ajax',
-  'Лейпциг': 'Leipzig',            'Лион': 'Lyon',
-  'Марсель': 'Marseille',          'Рома': 'Roma',
-  'Лацио': 'Lazio',                'Валенсия': 'Valencia',
-  'Бетис': 'Betis',                'Монако': 'Monaco',
-  // ── FIFA 4×4 spécifique (noms collés, sans espaces) ─────
-  'БрайтонэндХавАльбион': 'Brighton',
-  'Вулверхэмптон': 'Wolverhampton',
-  'МанчестерЮнайтед': 'Man United',
-  'МанчестерСити': 'Man City',
-  'ШеффилдЮнайтед': 'Sheffield Utd',
-  'КристалПэлэс': 'Crystal Palace',
-  'НьюкаслЮнайтед': 'Newcastle',
-  'НоттингемФорест': 'Nottm Forest',
-  'ЛутонТаун': 'Luton Town',
-  'ЛидсЮнайтед': 'Leeds',
-  'ВестХэм': 'West Ham',
-  'ВестХэмЮнайтед': 'West Ham',
-  'АстонВилла': 'Aston Villa',
-  'Бернли': 'Burnley',
-  'Фулхэм': 'Fulham',
-  'Брентфорд': 'Brentford',
-  'Эвертон': 'Everton',
-  'Лестер': 'Leicester',
-  'Борнмут': 'Bournemouth',
-  'Ипсвич': 'Ipswich',
-  'Саутгемптон': 'Southampton',
-  'Суонси': 'Swansea',
-  'Сандерленд': 'Sunderland',
-  'Мидлсбро': 'Middlesbrough',
-  'Стоук': 'Stoke',
-  'Норвич': 'Norwich',
-  'Блэкберн': 'Blackburn',
-  'КвинзПаркРейнджерс': 'QPR',
-  'Дерби': 'Derby',
-  'Кардифф': 'Cardiff',
-  'Миллуолл': 'Millwall',
-  'Ковентри': 'Coventry',
-  'Халл': 'Hull City',
-  'Шеффилд': 'Sheffield',
-  'Уотфорд': 'Watford',
-  'Вест Хэм': 'West Ham',
-  'Вест Бромвич': 'West Brom',
-  'ВестБромвич': 'West Brom',
+  'Ливерпуль': 'Liverpool',               'Арсенал': 'Arsenal',
+  'Бавария': 'Bayern',                    'Реал': 'Real Madrid',
+  'Барселона': 'Barcelone',               'ПСЖ': 'PSG',
+  'Ювентус': 'Juventus',                  'МанчестерСити': 'Man City',
+  'Манчестер Сити': 'Man City',           'МанчестерЮнайтед': 'Man United',
+  'Манчестер Юнайтед': 'Man United',      'Пьемонте Кальчо': 'Juventus',
+  'Челси': 'Chelsea',                     'Атлетико': 'Atlético',
+  'Милан': 'AC Milan',                    'Интер': 'Inter',
+  'Дортмунд': 'Dortmund',                 'Тоттенхэм': 'Tottenham',
+  'Наполи': 'Naples',                     'Севилья': 'Séville',
+  'Вильярреал': 'Villarreal',             'Бенфика': 'Benfica',
+  'Порту': 'Porto',                       'Аякс': 'Ajax',
+  'Лейпциг': 'Leipzig',                   'Лион': 'Lyon',
+  'Марсель': 'Marseille',                 'Рома': 'Roma',
+  'Лацио': 'Lazio',                       'Валенсия': 'Valencia',
+  'Бетис': 'Betis',                       'Монако': 'Monaco',
+  // FIFA 4×4 teams
+  'БрайтонэндХавАльбион': 'Brighton',    'Вулверхэмптон': 'Wolves',
+  'Брентфорд': 'Brentford',              'ШеффилдЮнайтед': 'Sheffield Utd',
+  'КристалПэлэс': 'Crystal Palace',      'Бернли': 'Burnley',
+  'Фулхэм': 'Fulham',                    'ЛутонТаун': 'Luton Town',
+  'НьюкаслЮнайтед': 'Newcastle',         'АстонВилла': 'Aston Villa',
+  'НоттингемФорест': 'Nottm Forest',     'ЭвертонФК': 'Everton',
+  'ВестХэмЮнайтед': 'West Ham',         'БорнмутФК': 'Bournemouth',
 };
 function translateTeam(name) {
   const t = name ? name.trim() : name;
@@ -128,8 +107,38 @@ function fetchChannelHTML(username) {
   });
 }
 
+// ── Fetch via Bot API (getHistory via forwardMessages) ───────
+// Pour les canaux publics, on peut aussi utiliser l'API bot pour
+// récupérer les messages avec copyMessage/forwardMessage
+// MAIS la méthode la plus simple est getChatHistory via bot
+function fetchViaBotAPI(username) {
+  return new Promise((resolve, reject) => {
+    // On utilise la méthode channel_history via getChatAdministrators
+    // Puis getHistory sur le chat public
+    const path = `/bot${BOT_TOKEN}/getUpdates?limit=100&allowed_updates=channel_post`;
+    const options = {
+      hostname: 'api.telegram.org',
+      path,
+      method: 'GET',
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          resolve(json);
+        } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(10000, () => { req.destroy(); reject(new Error('Timeout Bot API')); });
+    req.end();
+  });
+}
+
 // ── Extrait les textes des messages depuis HTML t.me/s ───────
-function extractMessages(html, is4x4 = false) {
+function extractMessages(html, game) {
   const messages = [];
   const regex = /<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/g;
   let m;
@@ -143,17 +152,15 @@ function extractMessages(html, is4x4 = false) {
       .replace(/&nbsp;/g, ' ')
       .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code)))
       .trim();
-    // FIFA 4×4 : pas de #N — le message commence par #EquipeA_EquipeB
-    const marker = is4x4 ? /#[А-ЯЁа-яёA-Za-z]/ : /#N/;
-    if (text && marker.test(text)) messages.push(text);
-  }
-  // Fallback pattern alternatif
-  if (messages.length < 3) {
-    const regex2 = /class="js-message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/g;
-    while ((m = regex2.exec(html)) !== null) {
-      let text = m[1].replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
-      const marker = is4x4 ? /#[А-ЯЁа-яёA-Za-z]/ : /#N/;
-      if (text && marker.test(text) && !messages.includes(text)) messages.push(text);
+
+    if (!text) continue;
+
+    // Canaux avec #N
+    if (text.includes('#N')) { messages.push(text); continue; }
+
+    // FIFA 4×4 : messages avec score X:Y et #T
+    if (game === 'fifa4x4' && text.match(/\d+:\d+/) && text.includes('#T')) {
+      messages.push(text); continue;
     }
   }
   return messages;
@@ -191,92 +198,72 @@ function parsePenalty(text) {
   };
 }
 
-// Jeu 21 — formats multiples possibles
+// Jeu 21 — Format: #N492. 20(9♣️A♣️) - 23(8♠️6♥️9♦️) #T43 [#O=#dealer21 #X=égalité]
 function parseJeu21(text) {
-  const n_match = text.match(/#N(\d+)/);
-  if (!n_match) return null;
-  const n = parseInt(n_match[1]);
-
-  // Format : #N123 X(cards) - Y(cards) #TX [#R]
-  // Même format que baccara mais les scores sont entre 1 et 21
-  let m = text.match(/#N\d+[.\s]+(\d+)\([^)]*\)\s*[-–]\s*(\d+)\([^)]*\)(?:\s*#T\d+)?(\s*#R)?/);
-  if (m) {
-    const player = parseInt(m[1]), dealer = parseInt(m[2]);
-    const result = player > 21 ? 'BUST' : dealer > 21 ? 'WIN' : player > dealer ? 'WIN' : player < dealer ? 'LOSE' : 'PUSH';
-    return { n, player, dealer, result, ts: Date.now() };
-  }
-
-  // Format : #N123 21 - 18 ou #N123 (21-18)
-  m = text.match(/#N\d+[.\s]+(\d+)\s*[-–]\s*(\d+)/);
-  if (m) {
-    const player = parseInt(m[1]), dealer = parseInt(m[2]);
-    const result = player > 21 ? 'BUST' : dealer > 21 ? 'WIN' : player > dealer ? 'WIN' : player < dealer ? 'LOSE' : 'PUSH';
-    return { n, player, dealer, result, ts: Date.now() };
-  }
-
-  // Format avec mots clés WIN/LOSE/BUST
-  m = text.match(/#N\d+.*?(\d{1,2}).*?(\d{1,2}).*(WIN|LOSE|BUST|PUSH|BJ)/i);
-  if (m) {
-    const player = parseInt(m[1]), dealer = parseInt(m[2]);
-    const rw = m[3].toUpperCase();
-    const result = rw.includes('WIN')||rw.includes('BJ') ? 'WIN' : rw.includes('LOS')||rw.includes('BUST') ? 'LOSE' : 'PUSH';
-    return { n, player, dealer, result, ts: Date.now() };
-  }
-
-  // Format P:X D:Y
-  m = text.match(/#N\d+.*?P[:\s](\d+).*?D[:\s](\d+)/i);
-  if (m) {
-    const player = parseInt(m[1]), dealer = parseInt(m[2]);
-    const result = player > 21 ? 'BUST' : dealer > 21 ? 'WIN' : player > dealer ? 'WIN' : player < dealer ? 'LOSE' : 'PUSH';
-    return { n, player, dealer, result, ts: Date.now() };
-  }
-
-  return null;
+  const match = text.match(/#N(\d+)[.\s]+(\d+)\([^)]*\)\s*[-–]\s*(\d+)\([^)]*\)(?:\s*#T(\d+))?(\s*#[OX])?/);
+  if (!match) return null;
+  const n      = parseInt(match[1]);
+  const player = parseInt(match[2]);
+  const dealer = parseInt(match[3]);
+  const flag   = (match[5] || '').trim();
+  let result;
+  if (flag === '#X')    result = 'PUSH';   // égalité exacte
+  else if (dealer > 21) result = 'WIN';    // dealer bust → joueur gagne
+  else if (player > 21) result = 'BUST';   // joueur bust → perd
+  else if (player > dealer) result = 'WIN';
+  else if (player < dealer) result = 'LOSE';
+  else result = 'PUSH';
+  return { n, player, dealer, result, ts: Date.now() };
 }
 
-// FIFA 4×4 — Format réel du canal statistika_fifa_4x4 :
-// Bloc de plusieurs matchs dans un même message, ex :
-//   #БрайтонэндХавАльбион_Арсенал ⏰ 2-й тайм 5:57
-//   6:7 (3:4 3:3 ) #T13
-// Un message peut contenir plusieurs matchs → on les découpe tous.
-// On génère un id séquentiel basé sur l'ordre de parution (pas de #N).
-let fifa4x4Counter = Date.now(); // compteur unique par session
+// FIFA 4×4 — Format multi-ligne:
+// #Team1_Team2 ⏰ 2-й тайм 5:57
+// 6:7 (3:4 3:3 ) #T13
 
-function parseFifa4x4Block(text) {
-  const results = [];
-  // Découper le texte en lignes
+// FIFA 4×4 — format différent, pas de #N, équipes dans le hashtag
+// Ex: #Челси_Вулверхэмптон ⏰ 2-й тайм 5:53
+// 5:8 (2:4 3:4 ) #T13
+let fifa4x4Counter = 1000; // compteur auto pour les IDs
+const fifa4x4Seen = new Set();
+
+function parseFifa4x4(text) {
+  // Chercher le score principal X:Y (pas celui dans les parenthèses)
+  // Format: #Team1_Team2 ... SCORE:SCORE (halftime) #TX
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-  for (let i = 0; i < lines.length - 1; i++) {
-    const line1 = lines[i];
-    const line2 = lines[i + 1];
-
-    // Ligne 1 : #EquipeA_EquipeB ⏰ ...
-    const teamMatch = line1.match(/^#([А-ЯЁа-яёA-Za-z]+)_([А-ЯЁа-яёA-Za-z]+)/);
-    if (!teamMatch) continue;
-
-    // Ligne 2 : H:A (h1:a1 h2:a2) #TXX
-    const scoreMatch = line2.match(/^(\d+):(\d+)\s*\([\d: ]+\)\s*#T(\d+)/);
-    if (!scoreMatch) continue;
-
-    const home  = translateTeam(teamMatch[1]);
-    const away  = translateTeam(teamMatch[2]);
-    const scoreH = parseInt(scoreMatch[1]);
-    const scoreA = parseInt(scoreMatch[2]);
-    const total  = parseInt(scoreMatch[3]);
-
-    results.push({
-      n:     fifa4x4Counter++,
-      home,
-      away,
-      score: `${scoreH}:${scoreA}`,
-      total,
-      ts:    Date.now()
-    });
-
-    i++; // sauter line2 déjà consommée
+  let teamLine = '', scoreLine = '';
+  for (const line of lines) {
+    if (line.startsWith('#') && line.includes('_')) teamLine = line;
+    if (line.match(/^\d+:\d+\s*\(/)) scoreLine = line;
   }
-  return results;
+
+  if (!scoreLine) return null;
+
+  // Extraire score total (ex: "6:7 (3:4 3:3 ) #T13")
+  const sm = scoreLine.match(/^(\d+):(\d+)/);
+  if (!sm) return null;
+
+  const homeGoals = parseInt(sm[1]);
+  const awayGoals = parseInt(sm[2]);
+  const score = `${homeGoals}:${awayGoals}`;
+
+  // Extraire équipes depuis le hashtag (ex: #Челси_Вулверхэмптон)
+  let home = '—', away = '—';
+  if (teamLine) {
+    const teamsRaw = teamLine.replace(/^#/, '').split('_');
+    if (teamsRaw.length >= 2) {
+      home = translateTeam(teamsRaw[0].replace(/⏰.*/, '').trim());
+      away = translateTeam(teamsRaw[1].replace(/⏰.*/, '').trim());
+    }
+  }
+
+  // Générer un ID unique basé sur le texte
+  const key = `${home}_${away}_${score}`;
+  if (fifa4x4Seen.has(key)) return null;
+  fifa4x4Seen.add(key);
+  const n = fifa4x4Counter++;
+
+  return { n, home, away, score, ts: Date.now() };
 }
 
 // ── Mise à jour d'un canal ───────────────────────────────────
@@ -285,50 +272,39 @@ async function updateChannel(key, username) {
     const html = await fetchChannelHTML(username);
     if (!html || html.length < 100) {
       console.warn(`[${key}] HTML vide ou trop court`);
-      return false;
+      return;
     }
 
-    const is4x4 = key === 'fifa4x4';
-    const messages = extractMessages(html, is4x4);
+    const messages = extractMessages(html, key);
 
     if (messages.length === 0) {
-      console.log(`[${key}] Aucun message trouvé sur t.me/s/${username}`);
-      return true;
+      console.log(`[${key}] Aucun message #N trouvé sur t.me/s/${username}`);
+      return;
     }
 
     const parsed = [];
-
-    if (is4x4) {
-      // FIFA 4×4 : chaque message peut contenir plusieurs matchs
-      for (const msg of messages) {
-        const bloc = parseFifa4x4Block(msg);
-        parsed.push(...bloc);
-      }
-    } else {
-      for (const msg of messages) {
-        let r = null;
-        if (key === 'baccara') r = parseBaccara(msg);
-        else if (key === 'jeu21') r = parseJeu21(msg);
-        else r = parsePenalty(msg);
-        if (r) parsed.push(r);
-      }
+    for (const msg of messages) {
+      let r = null;
+      if (key === 'baccara')   r = parseBaccara(msg);
+      else if (key === 'jeu21')    r = parseJeu21(msg);
+      else if (key === 'fifa4x4')  r = parseFifa4x4(msg);
+      else                          r = parsePenalty(msg);
+      if (r) parsed.push(r);
     }
 
     if (parsed.length > 0) {
-      if (!is4x4) parsed.sort((a, b) => b.n - a.n);
+      parsed.sort((a, b) => b.n - a.n);
       results[key] = parsed.slice(0, 50);
-      const label = is4x4 ? `${parsed.length} matchs` : `Dernier: #N${parsed[0].n}`;
-      console.log(`✅ [${key}] ${parsed.length} résultats. ${label}`);
+      console.log(`✅ [${key}] ${parsed.length} résultats. Dernier: #N${parsed[0].n}`);
     } else {
       console.log(`[${key}] ⚠️ ${messages.length} messages trouvés mais aucun parsé`);
+      // Afficher les 3 premiers pour debug
       messages.slice(0, 3).forEach((msg, i) => {
-        console.log(`   [${key}] msg${i+1}: ${msg.substring(0, 120).replace(/\n/g,' ')}`);
+        console.log(`   [${key}] msg${i+1}: ${msg.substring(0, 100).replace(/\n/g,' ')}`);
       });
     }
-    return true;
   } catch (e) {
     console.error(`❌ [${key}] Erreur: ${e.message}`);
-    return false;
   }
 }
 
@@ -341,44 +317,9 @@ async function pollAll() {
   await updateChannel('fifa4x4',   CHANNELS.fifa4x4);
 }
 
-// ── Polling adaptatif ────────────────────────────────────────
-let pollErrorCount = 0;
-const POLL_INTERVAL_OK  = 15000; // 15s en fonctionnement normal
-const POLL_INTERVAL_ERR = 60000; // 60s en cas d'erreur répétée
-
-async function pollAll() {
-  let hasError = false;
-  // Séquence avec petite pause entre chaque canal pour ne pas spammer Telegram
-  const channels = [
-    ['baccara',   CHANNELS.baccara],
-    ['penalty18', CHANNELS.penalty18],
-    ['penalty22', CHANNELS.penalty22],
-    ['jeu21',     CHANNELS.jeu21],
-    ['fifa4x4',   CHANNELS.fifa4x4],
-  ];
-  for (const [key, username] of channels) {
-    const ok = await updateChannel(key, username);
-    if (!ok) hasError = true;
-    // Pause 1s entre chaque requête pour éviter le rate-limit
-    await new Promise(r => setTimeout(r, 1000));
-  }
-
-  if (hasError) {
-    pollErrorCount++;
-  } else {
-    pollErrorCount = 0;
-  }
-
-  // Backoff : si 3+ erreurs consécutives → attendre 60s
-  const delay = pollErrorCount >= 3 ? POLL_INTERVAL_ERR : POLL_INTERVAL_OK;
-  if (pollErrorCount >= 3) {
-    console.warn(`⚠️ ${pollErrorCount} erreurs consécutives — prochain poll dans ${delay/1000}s`);
-  }
-  setTimeout(pollAll, delay);
-}
-
 console.log('🔄 Récupération initiale...');
-pollAll(); // démarre la boucle adaptative (plus de setInterval fixe)
+pollAll();
+setInterval(pollAll, 10000);
 
 // ── API REST ─────────────────────────────────────────────────
 app.get('/results/:game', (req, res) => {
@@ -467,9 +408,10 @@ app.post('/analyze', (req, res) => {
   apiReq.end();
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
+// Railway fournit le port via process.env.PORT
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n✅ HADAR BetAnalytics Server v3`);
-  console.log(`   http://localhost:${PORT}`);
-  console.log(`   Jeux: Baccara | Penalty 18 | Penalty 22 | Jeu 21 | FIFA 4×4\n`);
+  console.log(`   Port: ${PORT}`);
+  console.log(`   Jeux: Baccara | Penalty 18 | Penalty 22 | Jeu 21 | FIFA 4x4\n`);
 });
