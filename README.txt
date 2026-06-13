@@ -40,11 +40,6 @@ Le serveur DOIT être démarré pour que l'analyse IA fonctionne.
 ---
 
 ## 🔐 Système d'accès
-
-### Compte administrateur (par défaut)
-- Identifiant : HADAR_ADMIN
-- Code d'accès : Sh@lom12541
-
 ### Créer des membres
 1. Connecte-toi en admin
 2. Clique sur ☰ → Panneau Admin
