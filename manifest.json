@@ -1,0 +1,43 @@
+{
+  "name": "HADAR BetAnalytics Pro",
+  "short_name": "BetAnalytics",
+  "description": "Résultats live et pronostics IA pour vos jeux préférés",
+  "start_url": "./betting-analyzer.html",
+  "display": "standalone",
+  "background_color": "#0a0d14",
+  "theme_color": "#00e5a0",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "entertainment", "games"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Résultats Live",
+      "short_name": "Live",
+      "description": "Voir les résultats en temps réel",
+      "url": "./betting-analyzer.html#live",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Pronostics IA",
+      "short_name": "Pronostics",
+      "description": "Voir les pronostics IA",
+      "url": "./betting-analyzer.html#prono",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

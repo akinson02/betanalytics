@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HADAR BetAnalytics Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   VARIABLES
+══════════════════════════════════════════ */
+:root {
+  --bg: #07090f;
+  --surface: #0e1220;
+  --surface2: #151c30;
+  --surface3: #1c2540;
+  --border: #1e2845;
+  --accent: #00e5a0;
+  --accent2: #7b5ea7;
+  --red: #ff4d6d;
+  --gold: #f5a623;
+  --text: #e8eaf0;
+  --muted: #5a6280;
+  --card: #0f1522;
+}
+body.day-mode {
+  --bg: #f0f2f8;
+  --surface: #ffffff;
+  --surface2: #e8eaf2;
+  --surface3: #dde0ec;
+  --border: #cdd0e0;
+  --text: #1a1f35;
+  --muted: #7a80a0;
+  --card: #ffffff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════ */
+#landing {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg);
+  overflow-y: auto;
+}
+#landing.visible { display: block; }
+
+.landing-bg {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,229,160,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 90% 50%, rgba(123,94,167,0.10) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+/* Landing header */
+.landing-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 36px;
+}
+.landing-logo-icon {
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 40px rgba(0,229,160,0.25);
+}
+.landing-logo-name {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--text) 60%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.landing-logo-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Promo card */
+.promo-card {
+  background: linear-gradient(135deg, #12082a 0%, #0a1930 100%);
+  border: 1px solid rgba(0,229,160,0.25);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.promo-icon { font-size: 32px; margin-bottom: 10px; }
+.promo-headline {
+  font-size: 20px; font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.promo-desc {
+  font-size: 13px;
+  color: rgba(232,234,240,0.8);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.promo-code-box {
+  background: linear-gradient(135deg, #f5a623, #e8860a);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: inline-block;
+  width: 100%;
+}
+.promo-code-label {
+  font-size: 11px; font-weight: 700;
+  color: rgba(0,0,0,0.65);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.promo-code-value {
+  font-size: 36px; font-weight: 900;
+  color: #000;
+  letter-spacing: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.promo-bookies-title {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.bookies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.bookie-item {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.2s;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  text-align: center;
+}
+.bookie-item:hover {
+  border-color: var(--accent);
+  background: rgba(0,229,160,0.08);
+  color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,229,160,0.15);
+}
+
+/* Login card */
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.login-card-header {
+  margin-bottom: 20px;
+}
+.login-card-title {
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.login-card-sub {
+  font-size: 13px;
+  color: var(--muted);
+}
+.form-group { margin-bottom: 14px; }
+.form-label {
+  display: block;
+  font-size: 11px; font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+}
+.form-input::placeholder { color: var(--muted); }
+.form-error {
+  color: var(--red);
+  font-size: 12px;
+  margin-bottom: 10px;
+  display: none;
+  padding: 8px 12px;
+  background: rgba(255,77,109,0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255,77,109,0.2);
+}
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  letter-spacing: 0.3px;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Contact request */
+.contact-request-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 24px;
+}
+.contact-request-title {
+  font-size: 14px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.contact-request-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.contact-links { display: flex; flex-direction: column; gap: 8px; }
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.contact-link.telegram {
+  background: rgba(0,136,204,0.1);
+  border-color: rgba(0,136,204,0.25);
+}
+.contact-link.telegram:hover { border-color: #0088cc; }
+.contact-link.hadar {
+  background: rgba(0,229,160,0.08);
+  border-color: rgba(0,229,160,0.2);
+}
+.contact-link.hadar:hover { border-color: var(--accent); }
+.contact-link-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.contact-link.telegram .contact-link-avatar { background: rgba(0,136,204,0.2); }
+.contact-link.hadar .contact-link-avatar { background: rgba(0,229,160,0.15); }
+.contact-link-name { font-weight: 600; font-size: 13px; }
+.contact-link-role { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.contact-link-arrow { margin-left: auto; color: var(--muted); font-size: 16px; }
+
+.landing-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════════ */
+#admin-panel {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--bg);
+  overflow-y: auto;
+}
+#admin-panel.visible { display: block; }
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+}
+.admin-title {
+  font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; gap: 10px;
+}
+.admin-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.admin-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 16px;
+}
+.admin-section-title {
+  font-size: 14px; font-weight: 700;
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+@media (max-width: 480px) {
+  .admin-form-grid { grid-template-columns: 1fr; }
+}
+
+.admin-form-grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+@media (max-width: 560px) {
+  .admin-form-grid3 { grid-template-columns: 1fr 1fr; }
+}
+
+.admin-msg {
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: none;
+  font-weight: 500;
+}
+.admin-msg.success { background: rgba(0,229,160,0.12); border: 1px solid rgba(0,229,160,0.3); color: var(--accent); }
+.admin-msg.error { background: rgba(255,77,109,0.12); border: 1px solid rgba(255,77,109,0.3); color: var(--red); }
+
+.btn-secondary {
+  padding: 11px 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-danger {
+  padding: 7px 14px;
+  background: rgba(255,77,109,0.12);
+  border: 1px solid rgba(255,77,109,0.3);
+  border-radius: 8px;
+  color: var(--red);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-danger:hover { background: rgba(255,77,109,0.2); }
+
+.btn-accent {
+  padding: 7px 14px;
+  background: rgba(0,229,160,0.12);
+  border: 1px solid rgba(0,229,160,0.3);
+  border-radius: 8px;
+  color: var(--accent);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-accent:hover { background: rgba(0,229,160,0.2); }
+
+/* Search bar */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.search-input {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--muted); }
+
+/* User rows */
+.user-list { display: flex; flex-direction: column; gap: 8px; }
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.2s;
+}
+.user-row:hover { border-color: var(--surface3); }
+.user-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #000;
+}
+.user-avatar.admin-av { background: linear-gradient(135deg, #f5a623, #e8860a); }
+.user-info { flex: 1; min-width: 0; }
+.user-name {
+  font-size: 13px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-meta {
+  font-size: 11px; color: var(--muted);
+  margin-top: 1px;
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.user-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-admin { background: rgba(245,166,35,0.15); color: var(--gold); border: 1px solid rgba(245,166,35,0.3); }
+.badge-active { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); }
+.badge-inactive { background: rgba(255,77,109,0.1); color: var(--red); border: 1px solid rgba(255,77,109,0.2); }
+.user-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* Edit modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 2000;
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 380px;
+  margin: 20px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions .btn-secondary { flex: 1; }
+.modal-actions .btn-primary { flex: 2; }
+
+/* ══════════════════════════════════════════
+   MAIN APP
+══════════════════════════════════════════ */
+#app {
+  display: none;
+  min-height: 100vh;
+}
+#app.visible { display: block; }
+
+/* Header */
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.app-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.live-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,77,109,0.15);
+  border: 1px solid rgba(255,77,109,0.3);
+  color: var(--red);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.user-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,229,160,0.08);
+  border: 1px solid rgba(0,229,160,0.25);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px; font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.user-pill:hover { background: rgba(0,229,160,0.15); }
+
+.menu-btn {
+  background: none; border: none;
+  color: var(--text); font-size: 22px;
+  cursor: pointer; padding: 6px;
+  border-radius: 8px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+.menu-btn:hover { background: var(--surface2); }
+
+/* Clock */
+.clock-block { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+.clock-time { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--accent); }
+.clock-date { font-size: 10px; color: var(--muted); }
+
+/* Tabs */
+.app-tabs {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  padding: 0 20px;
+  overflow-x: auto;
+  gap: 2px;
+  scrollbar-width: none;
+}
+.app-tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 15px 18px;
+  font-size: 13px; font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 7px;
+  user-select: none;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Content */
+.app-content { padding: 20px; max-width: 920px; margin: 0 auto; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Game selector */
+.game-selector { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.game-btn {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.game-btn.active, .game-btn:hover {
+  background: rgba(0,229,160,0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Result cards */
+.results-grid { display: flex; flex-direction: column; gap: 8px; }
+.result-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.2s;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.result-card:hover { border-color: var(--surface3); }
+.result-card.new { border-color: var(--accent); background: rgba(0,229,160,0.04); }
+.result-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); min-width: 60px; }
+.match-teams { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: center; }
+.team-name { font-size: 13px; font-weight: 700; text-align: center; min-width: 80px; }
+.score-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: 2px;
+}
+.score-box.win { color: var(--accent); border-color: rgba(0,229,160,0.3); }
+.score-box.lose { color: var(--red); border-color: rgba(255,77,109,0.3); }
+.score-box.draw { color: var(--gold); border-color: rgba(245,166,35,0.3); }
+.winner-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; min-width: 80px; text-align: center; }
+.winner-badge.home { background: rgba(0,229,160,0.12); color: var(--accent); }
+.winner-badge.away { background: rgba(123,94,167,0.18); color: #b09dd0; }
+.winner-badge.draw { background: rgba(245,166,35,0.12); color: var(--gold); }
+
+/* Baccara */
+.baccara-row { display: flex; align-items: center; gap: 16px; flex: 1; justify-content: center; }
+.bac-side { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bac-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.bac-score { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; }
+.bac-vs { font-size: 11px; color: var(--muted); font-weight: 700; }
+.bac-total { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); background: var(--surface2); padding: 3px 8px; border-radius: 6px; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 14px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.chart-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.bar-label { font-size: 12px; min-width: 100px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+.bar-pct { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted); min-width: 38px; text-align: right; }
+
+/* AI Prono */
+.prono-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.prono-title { font-size: 20px; font-weight: 800; }
+.ai-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, rgba(0,229,160,0.12), rgba(123,94,167,0.12));
+  border: 1px solid rgba(0,229,160,0.25);
+  color: var(--accent);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.analyze-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+.analyze-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Prono cards */
+.prono-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+  animation: slideIn 0.3s ease;
+}
+.prono-card:hover { border-color: var(--surface3); }
+.prono-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+.prono-game-tag { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
+.prono-prediction { font-size: 16px; font-weight: 700; color: var(--text); }
+.confidence-block { text-align: center; flex-shrink: 0; }
+.confidence { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 800; line-height: 1; }
+.confidence.high { color: var(--accent); }
+.confidence.mid { color: var(--gold); }
+.confidence.low { color: var(--red); }
+.confidence-label { font-size: 10px; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
+.prono-bar-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.prono-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 1s ease; }
+.prono-reasoning { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.prono-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.prono-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px; }
+.tag-trend { background: rgba(0,229,160,0.1); color: var(--accent); border: 1px solid rgba(0,229,160,0.2); }
+.tag-caution { background: rgba(245,166,35,0.1); color: var(--gold); border: 1px solid rgba(245,166,35,0.2); }
+.tag-streak { background: rgba(123,94,167,0.15); color: #b09dd0; border: 1px solid rgba(123,94,167,0.25); }
+
+/* History panel */
+.history-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.history-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.history-date { font-size: 11px; color: var(--muted); }
+
+/* Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(0,0,0,0.25);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Section title */
+.section-title {
+  font-size: 12px; font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; }
+.empty-icon { font-size: 40px; margin-bottom: 14px; }
+
+/* Side menu */
+.menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; backdrop-filter: blur(4px); }
+.menu-overlay.open { display: block; }
+.side-menu {
+  position: fixed; top: 0; right: -320px;
+  width: 300px; height: 100vh;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 201;
+  transition: right 0.3s ease;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.side-menu.open { right: 0; }
+.menu-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.menu-title { font-size: 15px; font-weight: 800; }
+.menu-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; }
+.menu-section { padding: 14px 20px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-weight: 700; }
+.menu-item { display: flex; align-items: center; gap: 14px; padding: 13px 20px; color: var(--text); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; border: none; background: none; width: 100%; text-align: left; font-family: 'Space Grotesk', sans-serif; }
+.menu-item:hover { background: var(--surface2); }
+.menu-divider { height: 1px; background: var(--border); margin: 8px 0; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 20px; }
+.toggle-label { display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 500; color: var(--text); }
+.toggle-switch { width: 46px; height: 26px; background: var(--border); border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s; border: none; flex-shrink: 0; }
+.toggle-switch.on { background: var(--accent); }
+.toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: left 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+.toggle-switch.on::after { left: 23px; }
+.contact-card { margin: 4px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: border-color 0.2s; }
+.contact-card:hover { border-color: var(--accent); }
+.contact-avatar { width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent2), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 13px; font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: rgba(0,229,160,0.4); color: var(--accent); }
+.toast.error { border-color: rgba(255,77,109,0.4); color: var(--red); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .app-logo span { display: none; }
+  .clock-block { display: none; }
+  .team-name { min-width: 60px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LANDING PAGE (pré-connexion)
+══════════════════════════════════════ -->
+<div id="landing" class="visible">
+  <div class="landing-bg"></div>
+  <div class="landing-inner">
+
+    <div class="landing-logo">
+      <div class="landing-logo-icon">📊</div>
+      <div class="landing-logo-name">HADAR BetAnalytics</div>
+      <div class="landing-logo-sub">Powered by HADAR Corporation</div>
+    </div>
+
+    <!-- Promo bookmakers -->
+    <div class="promo-card">
+      <div class="promo-icon">🎯</div>
+      <div class="promo-headline">OFFRE EXCLUSIVE MEMBRES</div>
+      <div class="promo-desc">
+        Inscris-toi sur ton bookmaker favori avec le code promo et bénéficie de <strong style="color:var(--gold)">bonus exclusifs</strong> sur ton premier dépôt !
+      </div>
+      <div class="promo-code-box">
+        <div class="promo-code-label">Code Promo</div>
+        <div class="promo-code-value">HADAR</div>
+      </div>
+      <div class="promo-bookies-title">Disponible sur ces plateformes</div>
+      <div class="bookies-grid">
+        <a class="bookie-item" href="https://reffpa.com/L?tag=d_4957531m_97c_toptransfers_winter26_fr&site=4957531&ad=97&r=line/football" target="_blank">🎰 1xBet</a>
+        <a class="bookie-item" href="https://bwredir.com/2YQJ?p=%2Fregistration%2F" target="_blank">🏆 BetWinner</a>
+        <a class="bookie-item" href="https://refpazitag.top/L?tag=d_3682205m_54987c_&site=3682205&ad=54987" target="_blank">⭐ MegaPari</a>
+        <a class="bookie-item" href="https://apaff.top/L?tag=d_3822237m_70055c_&site=3822237&ad=70055" target="_blank">🌍 AfroPari</a>
+        <a class="bookie-item" href="https://fastpaff.top/L?tag=d_4324108m_77525c_&site=4324108&ad=77525" target="_blank">⚡ FastPari</a>
+        <a class="bookie-item" href="https://gpaff.top/L?tag=d_3404552m_136830c_&site=3404552&ad=136830" target="_blank">🥇 GoldPari</a>
+        <a class="bookie-item" href="https://lckypr.com/HADAR_REG" target="_blank">🍀 LuckyPari</a>
+        <a class="bookie-item" href="https://refpa3665.com/L?tag=d_3498626m_45415c_&site=3498626&ad=45415&r=registration" target="_blank">🎲 Melbet</a>
+        <a class="bookie-item" href="https://refpa98980.com/L?tag=d_5601962m_64485c_&site=5601962&ad=64485" target="_blank">🏅 WinWinBet</a>
+      </div>
+    </div>
+
+    <!-- Connexion -->
+    <div class="login-card">
+      <div class="login-card-header">
+        <div class="login-card-title">🔐 Espace Membres</div>
+        <div class="login-card-sub">Accès réservé — Identifiants fournis par l'administrateur uniquement.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Identifiant</label>
+        <input class="form-input" id="l-user" type="text" placeholder="Ton identifiant" autocomplete="username" onkeypress="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Code d'accès</label>
+        <input class="form-input" id="l-pass" type="password" placeholder="••••••••••" autocomplete="current-password" onkeypress="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="form-error" id="l-error"></div>
+      <button class="btn-primary" onclick="doLogin()">🚀 Accéder à la plateforme</button>
+    </div>
+
+    <!-- Demande d'accès -->
+    <div class="contact-request-card">
+      <div class="contact-request-title">Pas encore membre ?</div>
+      <div class="contact-request-sub">L'accès aux pronostics est exclusivement réservé aux membres disposant d'un code d'accès personnalisé fourni par l'administrateur HADAR.</div>
+      <div class="contact-links">
+        <a class="contact-link telegram" href="https://t.me/puregain" target="_blank">
+          <div class="contact-link-avatar">👑</div>
+          <div>
+            <div class="contact-link-name">Ash Racham — PDG</div>
+            <div class="contact-link-role">@puregain · Telegram</div>
+          </div>
+          <span class="contact-link-arrow">›</span>
+        </a>
+        <a class="contact-link telegram" href="https://t.me/angeup" target="_blank">
+          <div class="contact-link-avatar">🎓</div>
+          <div>
+            <div class="contact-link-name">Ange Ubert — Professeur</div>
+            <div class="contact-link-role">@angeup · Telegram</div>
+          </div>
+          <span class="contact-link-arrow">›</span>
+        </a>
+        <a class="contact-link hadar" href="https://t.me/millionsgain" target="_blank">
+          <div class="contact-link-avatar">📡</div>
+          <div>
+            <div class="contact-link-name">HADAR Canal Officiel</div>
+            <div class="contact-link-role">@millionsgain · Telegram</div>
+          </div>
+          <span class="contact-link-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="landing-footer">
+      BetAnalytics Pro © 2026 · HADAR Corporation<br>
+      Hadarcorporation.ca@gmail.com
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANNEAU ADMIN
+══════════════════════════════════════ -->
+<div id="admin-panel">
+  <div class="admin-header">
+    <div class="admin-title">⚙️ Panneau Administrateur</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn-secondary" onclick="exportCSV()" style="padding:8px 14px;font-size:12px">📥 Export CSV</button>
+      <button class="btn-secondary" onclick="closeAdmin()" style="padding:8px 14px;font-size:12px">✕ Fermer</button>
+    </div>
+  </div>
+  <div class="admin-inner">
+
+    <!-- Stats rapides -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px" id="admin-quick-stats"></div>
+
+    <!-- Créer un accès -->
+    <div class="admin-section">
+      <div class="admin-section-title">➕ Créer un accès membre</div>
+      <div class="admin-form-grid">
+        <div>
+          <label class="form-label">Identifiant</label>
+          <input class="form-input" id="a-user" type="text" placeholder="ex: Jean2026">
+        </div>
+        <div>
+          <label class="form-label">Code d'accès personnalisé</label>
+          <input class="form-input" id="a-pass" type="text" placeholder="ex: HADARVIP001">
+        </div>
+      </div>
+      <div class="admin-form-grid3">
+        <button class="btn-secondary" onclick="generateCode('VIP')" style="font-size:12px">🎯 HADARVIP</button>
+        <button class="btn-secondary" onclick="generateCode('GOLD')" style="font-size:12px">🥇 GOLD2026</button>
+        <button class="btn-secondary" onclick="generateCode('PREMIUM')" style="font-size:12px">💎 PREMIUM</button>
+      </div>
+      <div class="admin-msg" id="a-msg"></div>
+      <button class="btn-primary" onclick="adminCreateUser()">✅ Créer le compte</button>
+    </div>
+
+    <!-- Recherche et liste -->
+    <div class="admin-section">
+      <div class="admin-section-title">👥 Membres <span style="color:var(--muted);font-size:12px;font-weight:400" id="admin-count"></span></div>
+      <div class="search-bar">
+        <input class="search-input" id="admin-search" type="text" placeholder="🔍 Rechercher un membre..." oninput="adminRender()">
+        <button class="btn-secondary" onclick="adminRender()" style="padding:10px 14px">↻</button>
+      </div>
+      <div class="user-list" id="admin-user-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal édition utilisateur -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Modifier le membre</div>
+    <input type="hidden" id="edit-username-original">
+    <div class="form-group">
+      <label class="form-label">Identifiant</label>
+      <input class="form-input" id="edit-username" type="text" placeholder="Identifiant">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nouveau code d'accès</label>
+      <input class="form-input" id="edit-pass" type="text" placeholder="Laisser vide = inchangé">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Statut du compte</label>
+      <select class="form-input" id="edit-active" style="cursor:pointer">
+        <option value="1">✅ Actif</option>
+        <option value="0">🚫 Désactivé</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeEditModal()">Annuler</button>
+      <button class="btn-primary" onclick="saveEditUser()">💾 Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP PRINCIPALE (post-connexion)
+══════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Menu overlay -->
+  <div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+  <div class="side-menu" id="side-menu">
+    <div class="menu-header">
+      <span class="menu-title">⚙️ Menu</span>
+      <button class="menu-close" onclick="closeMenu()">✕</button>
+    </div>
+    <div class="menu-section">Apparence</div>
+    <div class="toggle-row">
+      <div class="toggle-label">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-label">Mode Nuit</span>
+      </div>
+      <button class="toggle-switch" id="theme-toggle" onclick="toggleTheme()"></button>
+    </div>
+    <div class="menu-divider"></div>
+    <button class="menu-item" id="admin-menu-link" style="display:none" onclick="openAdmin()">
+      <span style="font-size:18px">⚙️</span> Panneau Admin
+    </button>
+    <button class="menu-item" onclick="doLogout()">
+      <span style="font-size:18px">🚪</span> Se déconnecter
+    </button>
+    <div class="menu-divider"></div>
+    <div class="menu-section">Nous Contacter</div>
+    <a class="contact-card" href="https://t.me/puregain" target="_blank">
+      <div class="contact-avatar">👑</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">Ash Racham</div>
+        <div style="font-size:11px;color:var(--muted)">PDG · Telegram</div>
+      </div>
+      <span style="color:var(--muted)">›</span>
+    </a>
+    <a class="contact-card" href="https://t.me/angeup" target="_blank" style="margin-top:6px">
+      <div class="contact-avatar">🎓</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">Ange Ubert</div>
+        <div style="font-size:11px;color:var(--muted)">Professeur · Telegram</div>
+      </div>
+      <span style="color:var(--muted)">›</span>
+    </a>
+    <a class="contact-card" href="https://t.me/millionsgain" target="_blank" style="margin-top:6px">
+      <div class="contact-avatar">📡</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">HADAR Canal</div>
+        <div style="font-size:11px;color:var(--muted)">Officiel · Telegram</div>
+      </div>
+      <span style="color:var(--muted)">›</span>
+    </a>
+    <div style="padding:20px;margin-top:auto;text-align:center;font-size:11px;color:var(--muted)">
+      BetAnalytics Pro © 2026<br>HADAR Corporation
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">📊</div>
+      <span>HADAR BetAnalytics</span>
+    </div>
+    <div class="header-right">
+      <div class="clock-block">
+        <div class="clock-time" id="clock">--:--:--</div>
+        <div class="clock-date" id="clock-date"></div>
+      </div>
+      <div class="live-badge" id="live-badge">
+        <div class="live-dot"></div> DÉMO
+      </div>
+      <div id="user-area"></div>
+      <button class="menu-btn" onclick="openMenu()">☰</button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="app-tabs">
+    <div class="tab active" id="tab-live" onclick="switchTab('live')">📡 Live</div>
+    <div class="tab" id="tab-stats" onclick="switchTab('stats')">📊 Stats</div>
+    <div class="tab" id="tab-prono" onclick="switchTab('prono')">🤖 Analyse IA</div>
+    <div class="tab" id="tab-history" onclick="switchTab('history')">📁 Historique</div>
+  </nav>
+
+  <!-- Content -->
+  <div class="app-content">
+
+    <!-- LIVE -->
+    <div class="panel active" id="panel-live">
+      <div class="game-selector">
+        <button class="game-btn active" onclick="selectGame('penalty18',this)">⚽ Penalty 18</button>
+        <button class="game-btn" onclick="selectGame('penalty22',this)">⚽ Penalty 22</button>
+        <button class="game-btn" onclick="selectGame('baccara',this)">🃏 Baccara</button>
+        <button class="game-btn" onclick="selectGame('jeu21',this)">🃏 Jeu 21</button>
+        <button class="game-btn" onclick="selectGame('fifa4x4',this)">⚽ FIFA 4×4</button>
+      </div>
+      <div class="section-title">Derniers résultats</div>
+      <div class="results-grid" id="results-container"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="panel" id="panel-stats">
+      <div class="game-selector">
+        <button class="game-btn active" onclick="selectStatGame('penalty18',this)">⚽ Penalty 18</button>
+        <button class="game-btn" onclick="selectStatGame('penalty22',this)">⚽ Penalty 22</button>
+        <button class="game-btn" onclick="selectStatGame('baccara',this)">🃏 Baccara</button>
+        <button class="game-btn" onclick="selectStatGame('jeu21',this)">🃏 Jeu 21</button>
+        <button class="game-btn" onclick="selectStatGame('fifa4x4',this)">⚽ FIFA 4×4</button>
+      </div>
+      <div id="stats-container"></div>
+    </div>
+
+    <!-- PRONO IA -->
+    <div class="panel" id="panel-prono">
+      <div class="prono-header">
+        <div class="prono-title">Analyse IA</div>
+        <div class="ai-badge">✨ Claude AI</div>
+      </div>
+      <div class="game-selector">
+        <button class="game-btn active" onclick="selectPronoGame('penalty18',this)">⚽ Penalty 18</button>
+        <button class="game-btn" onclick="selectPronoGame('penalty22',this)">⚽ Penalty 22</button>
+        <button class="game-btn" onclick="selectPronoGame('baccara',this)">🃏 Baccara</button>
+        <button class="game-btn" onclick="selectPronoGame('jeu21',this)">🃏 Jeu 21</button>
+        <button class="game-btn" onclick="selectPronoGame('fifa4x4',this)">⚽ FIFA 4×4</button>
+      </div>
+      <button class="analyze-btn" id="analyze-btn" onclick="runAnalysis()">
+        🔍 Analyser et Pronostiquer
+      </button>
+      <div id="prono-container">
+        <div class="empty-state">
+          <div class="empty-icon">🤖</div>
+          Lance l'analyse pour obtenir les pronostics IA basés sur l'historique réel
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="panel" id="panel-history">
+      <div class="section-title">Historique des analyses IA</div>
+      <div id="history-container">
+        <div class="empty-state">
+          <div class="empty-icon">📁</div>
+          Tes analyses précédentes apparaîtront ici
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /app-content -->
+</div><!-- /app -->
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const ADMIN_CREDS = { user: 'HADAR_ADMIN', pass: 'Sh@lom12541' };
+const STORAGE_KEY = 'hadar_v2_accounts';
+const API = 'http://localhost:3000';
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const DATA = { penalty18: [], penalty22: [], baccara: [], jeu21: [], fifa4x4: [] };
+let currentGame      = 'penalty18';
+let currentStatGame  = 'penalty18';
+let currentPronoGame = 'penalty18';
+let currentUser      = null;
+
+// ══════════════════════════════════════════
+// ACCOUNTS (localStorage)
+// ══════════════════════════════════════════
+function getAccounts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveAccounts(acc) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(acc));
+}
+
+// Init admin si absent
+(function() {
+  const acc = getAccounts();
+  if (!acc[ADMIN_CREDS.user]) {
+    acc[ADMIN_CREDS.user] = {
+      pass: btoa(ADMIN_CREDS.pass),
+      role: 'admin',
+      active: true,
+      created: today(),
+      lastLogin: null
+    };
+    saveAccounts(acc);
+  }
+})();
+
+function today() {
+  return new Date().toLocaleDateString('fr-FR');
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 2800);
+}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function doLogin() {
+  const user = document.getElementById('l-user').value.trim();
+  const pass = document.getElementById('l-pass').value;
+  const err  = document.getElementById('l-error');
+  err.style.display = 'none';
+
+  if (!user || !pass) {
+    err.textContent = 'Remplis tous les champs.';
+    err.style.display = 'block'; return;
+  }
+
+  const acc = getAccounts();
+  if (!acc[user]) {
+    err.textContent = '❌ Identifiant introuvable. Contacte l\'administrateur.';
+    err.style.display = 'block'; return;
+  }
+  if (!acc[user].active && acc[user].role !== 'admin') {
+    err.textContent = '🚫 Compte désactivé. Contacte l\'administrateur.';
+    err.style.display = 'block'; return;
+  }
+  if (acc[user].pass !== btoa(pass)) {
+    err.textContent = '❌ Code d\'accès incorrect.';
+    err.style.display = 'block'; return;
+  }
+
+  // Mise à jour lastLogin
+  acc[user].lastLogin = new Date().toLocaleString('fr-FR');
+  saveAccounts(acc);
+
+  currentUser = { username: user, role: acc[user].role || 'member' };
+  sessionStorage.setItem('hadar_session', JSON.stringify(currentUser));
+
+  showApp();
+}
+
+function doLogout() {
+  if (!confirm('Se déconnecter ?')) return;
+  currentUser = null;
+  sessionStorage.removeItem('hadar_session');
+  showLanding();
+}
+
+function showLanding() {
+  document.getElementById('landing').classList.add('visible');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('admin-panel').classList.remove('visible');
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+  document.getElementById('l-error').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('landing').classList.remove('visible');
+  document.getElementById('app').classList.add('visible');
+  updateUserArea();
+  renderResults();
+  renderStats();
+  renderHistory();
+  checkServer();
+}
+
+function updateUserArea() {
+  const area = document.getElementById('user-area');
+  const adminLink = document.getElementById('admin-menu-link');
+  if (!currentUser) { area.innerHTML = ''; return; }
+  const isAdmin = currentUser.role === 'admin';
+  area.innerHTML = `<div class="user-pill">${isAdmin ? '👑' : '👤'} ${currentUser.username}</div>`;
+  adminLink.style.display = isAdmin ? 'flex' : 'none';
+}
+
+// Restore session
+(function() {
+  const saved = sessionStorage.getItem('hadar_session');
+  if (saved) {
+    const u = JSON.parse(saved);
+    const acc = getAccounts();
+    if (acc[u.username] && (acc[u.username].active || u.role === 'admin')) {
+      currentUser = u;
+      showApp();
+      return;
+    }
+  }
+  showLanding();
+})();
+
+// ══════════════════════════════════════════
+// ADMIN PANEL
+// ══════════════════════════════════════════
+function openAdmin() {
+  if (!currentUser || currentUser.role !== 'admin') {
+    showToast('Accès admin requis', 'error'); return;
+  }
+  closeMenu();
+  adminRender();
+  document.getElementById('admin-panel').classList.add('visible');
+}
+
+function closeAdmin() {
+  document.getElementById('admin-panel').classList.remove('visible');
+}
+
+function generateCode(prefix) {
+  const num = Math.floor(Math.random() * 900) + 100;
+  const year = new Date().getFullYear();
+  const codes = { VIP: `HADARVIP${num}`, GOLD: `GOLD${year}`, PREMIUM: `PREMIUM${num}` };
+  document.getElementById('a-pass').value = codes[prefix] || `HADAR${num}`;
+}
+
+function adminCreateUser() {
+  const user = document.getElementById('a-user').value.trim();
+  const pass = document.getElementById('a-pass').value.trim();
+  const msg  = document.getElementById('a-msg');
+
+  const showMsg = (text, type) => {
+    msg.textContent = text;
+    msg.className   = `admin-msg ${type}`;
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 4000);
+  };
+
+  if (!user || !pass) { showMsg('Remplis les deux champs.', 'error'); return; }
+  if (pass.length < 4) { showMsg('Code d\'accès trop court (min 4 caractères).', 'error'); return; }
+
+  const acc = getAccounts();
+  if (acc[user]) { showMsg('Cet identifiant existe déjà.', 'error'); return; }
+
+  acc[user] = { pass: btoa(pass), role: 'member', active: true, created: today(), lastLogin: null };
+  saveAccounts(acc);
+  showMsg(`✅ Compte "${user}" créé — Code : ${pass}`, 'success');
+  document.getElementById('a-user').value = '';
+  document.getElementById('a-pass').value = '';
+  adminRender();
+}
+
+function adminRender() {
+  const acc    = getAccounts();
+  const search = (document.getElementById('admin-search')?.value || '').toLowerCase();
+  const list   = document.getElementById('admin-user-list');
+  const count  = document.getElementById('admin-count');
+
+  const users = Object.entries(acc).filter(([u]) =>
+    !search || u.toLowerCase().includes(search)
+  );
+
+  // Quick stats
+  const total   = Object.keys(acc).length;
+  const active  = Object.values(acc).filter(d => d.active).length;
+  const members = Object.values(acc).filter(d => d.role === 'member').length;
+  document.getElementById('admin-quick-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-value" style="font-size:22px">${total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-card"><div class="stat-value" style="font-size:22px;color:var(--accent)">${active}</div><div class="stat-label">Actifs</div></div>
+    <div class="stat-card"><div class="stat-value" style="font-size:22px;color:var(--accent2)">${members}</div><div class="stat-label">Membres</div></div>
+  `;
+
+  count.textContent = `(${users.length})`;
+
+  if (users.length === 0) {
+    list.innerHTML = `<div class="empty-state" style="padding:24px"><div class="empty-icon">👤</div>Aucun membre trouvé</div>`;
+    return;
+  }
+
+  list.innerHTML = users.map(([u, d]) => {
+    const isAdmin = d.role === 'admin';
+    const initials = u.substring(0, 2).toUpperCase();
+    return `
+      <div class="user-row">
+        <div class="user-avatar ${isAdmin ? 'admin-av' : ''}">${initials}</div>
+        <div class="user-info">
+          <div class="user-name">
+            ${isAdmin ? '👑 ' : ''}${u}
+            <span class="user-badge ${d.active ? 'badge-active' : 'badge-inactive'}" style="margin-left:6px">${d.active ? 'Actif' : 'Inactif'}</span>
+            ${isAdmin ? '<span class="user-badge badge-admin" style="margin-left:4px">Admin</span>' : ''}
+          </div>
+          <div class="user-meta">
+            <span>📅 ${d.created || '—'}</span>
+            ${d.lastLogin ? `<span>🕒 ${d.lastLogin}</span>` : '<span>Jamais connecté</span>'}
+          </div>
+        </div>
+        <div class="user-actions">
+          ${!isAdmin ? `
+            <button class="btn-accent" onclick="openEditModal('${u}')" title="Modifier">✏️</button>
+            <button class="btn-secondary" onclick="toggleUser('${u}')" title="${d.active ? 'Désactiver' : 'Activer'}" style="padding:7px 10px;font-size:12px">${d.active ? '🚫' : '✅'}</button>
+            <button class="btn-danger" onclick="deleteUser('${u}')" title="Supprimer">🗑</button>
+          ` : '<span style="font-size:11px;color:var(--muted)">Admin</span>'}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleUser(username) {
+  const acc = getAccounts();
+  if (!acc[username]) return;
+  acc[username].active = !acc[username].active;
+  saveAccounts(acc);
+  adminRender();
+  showToast(`Compte ${acc[username].active ? 'activé' : 'désactivé'}`, acc[username].active ? 'success' : 'error');
+}
+
+function deleteUser(username) {
+  if (username === ADMIN_CREDS.user) { showToast('Impossible de supprimer l\'admin', 'error'); return; }
+  if (!confirm(`Supprimer définitivement "${username}" ?`)) return;
+  const acc = getAccounts();
+  delete acc[username];
+  saveAccounts(acc);
+  adminRender();
+  showToast(`Compte "${username}" supprimé`);
+}
+
+function openEditModal(username) {
+  const acc = getAccounts();
+  const d   = acc[username];
+  if (!d) return;
+  document.getElementById('edit-username-original').value = username;
+  document.getElementById('edit-username').value = username;
+  document.getElementById('edit-pass').value = '';
+  document.getElementById('edit-active').value = d.active ? '1' : '0';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+function saveEditUser() {
+  const original = document.getElementById('edit-username-original').value;
+  const newUser  = document.getElementById('edit-username').value.trim();
+  const newPass  = document.getElementById('edit-pass').value.trim();
+  const active   = document.getElementById('edit-active').value === '1';
+  const acc      = getAccounts();
+
+  if (!newUser) { showToast('Identifiant vide', 'error'); return; }
+  if (newUser !== original && acc[newUser]) { showToast('Cet identifiant existe déjà', 'error'); return; }
+
+  const data = { ...acc[original] };
+  data.active = active;
+  if (newPass) data.pass = btoa(newPass);
+
+  delete acc[original];
+  acc[newUser] = data;
+  saveAccounts(acc);
+  closeEditModal();
+  adminRender();
+  showToast(`Compte mis à jour ✅`);
+}
+
+function exportCSV() {
+  const acc  = getAccounts();
+  let csv = 'Identifiant,Rôle,Statut,Créé le,Dernière connexion\n';
+  Object.entries(acc).forEach(([u, d]) => {
+    csv += `"${u}","${d.role}","${d.active ? 'Actif' : 'Inactif'}","${d.created || ''}","${d.lastLogin || ''}"\n`;
+  });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `hadar_membres_${today().replace(/\//g,'_')}.csv`;
+  a.click();
+  showToast('Export CSV téléchargé 📥');
+}
+
+// ══════════════════════════════════════════
+// APP TABS & GAME SELECTORS
+// ══════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function selectGame(game, btn) {
+  currentGame = game;
+  document.querySelectorAll('#panel-live .game-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderResults();
+}
+
+function selectStatGame(game, btn) {
+  currentStatGame = game;
+  document.querySelectorAll('#panel-stats .game-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderStats();
+}
+
+function selectPronoGame(game, btn) {
+  currentPronoGame = game;
+  document.querySelectorAll('#panel-prono .game-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('prono-container').innerHTML = `
+    <div class="empty-state"><div class="empty-icon">🤖</div>Lance l'analyse pour ce jeu</div>`;
+}
+
+// ══════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════
+function renderResults() {
+  const container = document.getElementById('results-container');
+  const data = [...DATA[currentGame]].sort((a, b) => b.n - a.n);
+  if (data.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div>En attente des prochains résultats Telegram...<br><span style="font-size:11px;display:block;margin-top:8px">Les données arrivent dès la prochaine publication</span></div>`;
+    return;
+  }
+  if (currentGame === 'baccara') {
+    container.innerHTML = data.map((r, i) => renderBaccara(r, i === 0)).join('');
+  } else if (currentGame === 'jeu21') {
+    container.innerHTML = data.map((r, i) => renderJeu21(r, i === 0)).join('');
+  } else if (currentGame === 'fifa4x4') {
+    container.innerHTML = data.map((r, i) => renderFifa4x4(r, i === 0)).join('');
+  } else {
+    container.innerHTML = data.map((r, i) => renderPenalty(r, i === 0)).join('');
+  }
+}
+
+function renderPenalty(r, isNew) {
+  const [h, a] = r.score.split(':').map(Number);
+  const winner = h > a ? 'home' : h < a ? 'away' : 'draw';
+  const wLabel = winner === 'home' ? r.home : winner === 'away' ? r.away : 'Égalité';
+  const sc = winner === 'home' ? 'win' : winner === 'away' ? 'lose' : 'draw';
+  return `<div class="result-card ${isNew ? 'new' : ''}">
+    <span class="result-num">#N${r.n}</span>
+    <div class="match-teams">
+      <span class="team-name">${r.home}</span>
+      <span class="score-box ${sc}">${r.score}</span>
+      <span class="team-name">${r.away}</span>
+    </div>
+    <span class="winner-badge ${winner}">${wLabel}</span>
+  </div>`;
+}
+
+function renderBaccara(r, isNew) {
+  const winner = r.player > r.banker ? 'Joueur' : r.player < r.banker ? 'Banquier' : 'Égalité';
+  const wColor = r.player > r.banker ? 'var(--accent)' : r.player < r.banker ? 'var(--accent2)' : 'var(--gold)';
+  return `<div class="result-card ${isNew ? 'new' : ''}">
+    <span class="result-num">#N${r.n}</span>
+    <div class="baccara-row">
+      <div class="bac-side">
+        <span class="bac-label">Joueur</span>
+        <span class="bac-score" style="color:var(--accent)">${r.player}</span>
+      </div>
+      <span class="bac-vs">VS</span>
+      <div class="bac-side">
+        <span class="bac-label">Banquier</span>
+        <span class="bac-score" style="color:var(--accent2)">${r.banker}</span>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;font-weight:700;color:${wColor}">${winner}</div>
+      <div class="bac-total">T:${r.total}${r.natural ? ' 🔥' : ''}</div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+
+function renderFifa4x4(r, isNew) {
+  // FIFA 4×4 : mêmes scores mais plus élevés (7, 8, 9 buts possible)
+  if (!r.score) return renderPenalty(r, isNew);
+  const [h, a] = r.score.split(':').map(Number);
+  const winner = h > a ? 'home' : h < a ? 'away' : 'draw';
+  const wLabel = winner === 'home' ? r.home : winner === 'away' ? r.away : 'Égalité';
+  const sc = winner === 'home' ? 'win' : winner === 'away' ? 'lose' : 'draw';
+  const totalGoals = h + a;
+  return `<div class="result-card ${isNew ? 'new' : ''}">
+    <span class="result-num">#N${r.n}</span>
+    <div class="match-teams">
+      <span class="team-name">${r.home}</span>
+      <span class="score-box ${sc}">${r.score}</span>
+      <span class="team-name">${r.away}</span>
+    </div>
+    <div style="text-align:right">
+      <span class="winner-badge ${winner}">${wLabel}</span>
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">⚽ ${totalGoals} buts</div>
+    </div>
+  </div>`;
+}
+
+function renderJeu21(r, isNew) {
+  const resColor = r.result === 'WIN' ? 'var(--accent)' : r.result === 'LOSE' ? 'var(--red)' : 'var(--gold)';
+  const resLabel = r.result === 'WIN' ? '✅ WIN' : r.result === 'LOSE' ? '❌ LOSE' : '🤝 PUSH';
+  const pBust = r.player > 21, dBust = r.dealer > 21;
+  return `<div class="result-card ${isNew ? 'new' : ''}">
+    <span class="result-num">#N${r.n}</span>
+    <div class="baccara-row">
+      <div class="bac-side">
+        <span class="bac-label">Joueur</span>
+        <span class="bac-score" style="color:${pBust?'var(--red)':'var(--accent)'}">${r.player}${pBust?' 💥':''}</span>
+      </div>
+      <span class="bac-vs">VS</span>
+      <div class="bac-side">
+        <span class="bac-label">Dealer</span>
+        <span class="bac-score" style="color:${dBust?'var(--red)':'var(--accent2)'}">${r.dealer}${dBust?' 💥':''}</span>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:${resColor};text-align:right;min-width:80px">${resLabel}</div>
+  </div>`;
+}
+
+function renderJeu21Stats() {
+  const data = DATA.jeu21;
+  if (!data.length) return `<div class="empty-state"><div class="empty-icon">📊</div>Aucune donnée disponible</div>`;
+  let wins=0, loses=0, pushes=0, busts=0, total21=0;
+  data.forEach(r => {
+    if (r.result === 'WIN') wins++;
+    else if (r.result === 'LOSE') loses++;
+    else pushes++;
+    if (r.player > 21 || r.dealer > 21) busts++;
+    if (r.player === 21 || r.dealer === 21) total21++;
+  });
+  const total = data.length;
+  const wp = Math.round(wins/total*100);
+  const lp = Math.round(loses/total*100);
+  const pp = Math.round(pushes/total*100);
+  return `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${wp}%</div><div class="stat-label">Victoires</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--red)">${lp}%</div><div class="stat-label">Défaites</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--gold)">${pp}%</div><div class="stat-label">Égalités</div></div>
+      <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Mains jouées</div></div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-title">Distribution des résultats</div>
+      <div class="bar-row"><span class="bar-label">✅ Victoires (WIN)</span><div class="bar-track"><div class="bar-fill" style="width:${wp}%;background:var(--accent)"></div></div><span class="bar-pct">${wp}%</span></div>
+      <div class="bar-row"><span class="bar-label">❌ Défaites (LOSE)</span><div class="bar-track"><div class="bar-fill" style="width:${lp}%;background:var(--red)"></div></div><span class="bar-pct">${lp}%</span></div>
+      <div class="bar-row"><span class="bar-label">🤝 Égalités (PUSH)</span><div class="bar-track"><div class="bar-fill" style="width:${pp}%;background:var(--gold)"></div></div><span class="bar-pct">${pp}%</span></div>
+      <div class="bar-row"><span class="bar-label">💥 Bust (>21)</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(busts/total*100)}%;background:var(--accent2)"></div></div><span class="bar-pct">${Math.round(busts/total*100)}%</span></div>
+    </div>`;
+}
+
+function renderStats() {
+  const container = document.getElementById('stats-container');
+  if (currentStatGame === 'baccara') {
+    container.innerHTML = renderBaccaraStats();
+  } else if (currentStatGame === 'jeu21') {
+    container.innerHTML = renderJeu21Stats();
+  } else {
+    // penalty18, penalty22, fifa4x4 utilisent le même renderer
+    container.innerHTML = renderPenaltyStats(currentStatGame);
+  }
+}
+
+function renderPenaltyStats(game) {
+  const data = DATA[game];
+  if (!data.length) return `<div class="empty-state"><div class="empty-icon">📊</div>Aucune donnée disponible</div>`;
+  const teamStats = {};
+  let totalHome = 0, totalAway = 0, totalDraw = 0;
+  data.forEach(r => {
+    const [h, a] = r.score.split(':').map(Number);
+    if (!teamStats[r.home]) teamStats[r.home] = { w: 0, l: 0, d: 0 };
+    if (!teamStats[r.away]) teamStats[r.away] = { w: 0, l: 0, d: 0 };
+    if (h > a) { teamStats[r.home].w++; teamStats[r.away].l++; totalHome++; }
+    else if (h < a) { teamStats[r.away].w++; teamStats[r.home].l++; totalAway++; }
+    else { teamStats[r.home].d++; teamStats[r.away].d++; totalDraw++; }
+  });
+  const total = data.length;
+  const hp = Math.round(totalHome / total * 100);
+  const ap = Math.round(totalAway / total * 100);
+  const teamRows = Object.entries(teamStats)
+    .map(([name, s]) => {
+      const pl = s.w + s.l + s.d;
+      return { name, wr: pl > 0 ? Math.round(s.w / pl * 100) : 0, ...s };
+    }).sort((a, b) => b.wr - a.wr);
+
+  return `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${hp}%</div><div class="stat-label">Victoires Domicile</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent2)">${ap}%</div><div class="stat-label">Victoires Extérieur</div></div>
+      <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Matchs analysés</div></div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-title">Taux de victoire par équipe (top 10)</div>
+      ${teamRows.slice(0,10).map(t => `
+        <div class="bar-row">
+          <span class="bar-label">${t.name}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${t.wr}%;background:${t.wr>=60?'var(--accent)':t.wr>=40?'var(--gold)':'var(--red)'}"></div></div>
+          <span class="bar-pct">${t.wr}%</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderBaccaraStats() {
+  const data = DATA.baccara;
+  if (!data.length) return `<div class="empty-state"><div class="empty-icon">📊</div>Aucune donnée disponible</div>`;
+  let pW = 0, bW = 0, ties = 0, nats = 0, totalScore = 0;
+  data.forEach(r => {
+    if (r.player > r.banker) pW++;
+    else if (r.banker > r.player) bW++;
+    else ties++;
+    if (r.natural) nats++;
+    totalScore += r.total;
+  });
+  const total = data.length;
+  const pp = Math.round(pW / total * 100);
+  const bp = Math.round(bW / total * 100);
+  const tp = Math.round(ties / total * 100);
+  return `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${pp}%</div><div class="stat-label">Joueur gagne</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent2)">${bp}%</div><div class="stat-label">Banquier gagne</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--gold)">${tp}%</div><div class="stat-label">Égalités</div></div>
+      <div class="stat-card"><div class="stat-value">${Math.round(totalScore/total*10)/10}</div><div class="stat-label">Score moyen</div></div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-title">Distribution des résultats</div>
+      <div class="bar-row"><span class="bar-label">🟢 Joueur gagne</span><div class="bar-track"><div class="bar-fill" style="width:${pp}%;background:var(--accent)"></div></div><span class="bar-pct">${pp}%</span></div>
+      <div class="bar-row"><span class="bar-label">🟣 Banquier gagne</span><div class="bar-track"><div class="bar-fill" style="width:${bp}%;background:var(--accent2)"></div></div><span class="bar-pct">${bp}%</span></div>
+      <div class="bar-row"><span class="bar-label">🟡 Égalité</span><div class="bar-track"><div class="bar-fill" style="width:${tp}%;background:var(--gold)"></div></div><span class="bar-pct">${tp}%</span></div>
+      <div class="bar-row"><span class="bar-label">🔥 Naturelles</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(nats/total*100)}%;background:var(--red)"></div></div><span class="bar-pct">${Math.round(nats/total*100)}%</span></div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// IA ANALYSIS — AMÉLIORÉE
+// ══════════════════════════════════════════
+const analysisHistory = [];
+
+function buildPrompt(game, data) {
+  const name = game === 'baccara' ? 'Baccara' : game === 'penalty18' ? 'FIFA Penalty 18' : game === 'penalty22' ? 'FIFA Penalty 22' : game === 'jeu21' ? 'Jeu 21 (Blackjack)' : 'FIFA 4×4';
+  const isPenalty = game !== 'baccara' && game !== 'jeu21';
+  let histText = '';
+
+  if (game === 'jeu21') {
+    let wins=0, loses=0, pushes=0;
+    data.forEach(r => {
+      if (r.result === 'WIN') wins++;
+      else if (r.result === 'LOSE') loses++;
+      else pushes++;
+    });
+    const total_j = data.length;
+    const last10_j = data.slice(0,10).map(r =>
+      `#N${r.n}: Joueur ${r.player} vs Dealer ${r.dealer} → ${r.result}`
+    ).join('\n');
+    histText = `STATISTIQUES (${total_j} mains):\n- WIN: ${wins} (${Math.round(wins/total_j*100)}%)\n- LOSE: ${loses} (${Math.round(loses/total_j*100)}%)\n- PUSH: ${pushes} (${Math.round(pushes/total_j*100)}%)\n\nDERNIÈRES 10 MAINS:\n${last10_j}`;
+  } else if (isPenalty) {
+    // Calcule les stats équipes pour enrichir le prompt
+    const teamStats = {};
+    data.forEach(r => {
+      const [h, a] = r.score.split(':').map(Number);
+      if (!teamStats[r.home]) teamStats[r.home] = { w:0, l:0, d:0, gf:0, ga:0 };
+      if (!teamStats[r.away]) teamStats[r.away] = { w:0, l:0, d:0, gf:0, ga:0 };
+      if (h > a) { teamStats[r.home].w++; teamStats[r.away].l++; }
+      else if (h < a) { teamStats[r.away].w++; teamStats[r.home].l++; }
+      else { teamStats[r.home].d++; teamStats[r.away].d++; }
+      teamStats[r.home].gf += h; teamStats[r.home].ga += a;
+      teamStats[r.away].gf += a; teamStats[r.away].ga += h;
+    });
+    const statsLine = Object.entries(teamStats)
+      .map(([t, s]) => {
+        const pl = s.w + s.l + s.d;
+        const wr = pl ? Math.round(s.w/pl*100) : 0;
+        return `${t}: ${s.w}V-${s.l}D (${wr}% victoires, GF:${s.gf} GA:${s.ga})`;
+      }).sort((a,b) => {
+        const wa = parseInt(a.match(/(\d+)%/)?.[1]||0);
+        const wb = parseInt(b.match(/(\d+)%/)?.[1]||0);
+        return wb - wa;
+      }).join(' | ');
+
+    const last20 = data.slice(0, 20);
+    histText = `STATISTIQUES GLOBALES (${data.length} matchs):\n${statsLine}\n\nDERNIERS 20 MATCHS:\n`;
+    histText += last20.map(r => {
+      const [h, a] = r.score.split(':').map(Number);
+      const w = h > a ? r.home : h < a ? r.away : 'AUCUN(impossible en penalty)';
+      return `#N${r.n}: ${r.home} ${r.score} ${r.away} → ${w}`;
+    }).join('\n');
+  } else {
+    let pW=0, bW=0, ties=0, nats=0;
+    let streakP=0, streakB=0, curP=0, curB=0;
+    data.forEach((r, i) => {
+      if (r.player > r.banker) { pW++; curP++; curB=0; if(curP>streakP)streakP=curP; }
+      else if (r.banker > r.player) { bW++; curB++; curP=0; if(curB>streakB)streakB=curB; }
+      else { ties++; curP=0; curB=0; }
+      if (r.natural) nats++;
+    });
+    const total = data.length;
+    const last10 = data.slice(0, 10).map(r =>
+      `#N${r.n}: J${r.player} vs B${r.banker} → ${r.player>r.banker?'JOUEUR':r.banker>r.player?'BANQUIER':'ÉGALITÉ'}${r.natural?' 🔥':''}`
+    ).join('\n');
+
+    histText = `STATISTIQUES (${total} mains):
+- Joueur: ${pW} victoires (${Math.round(pW/total*100)}%) | Série max: ${streakP} consécutives
+- Banquier: ${bW} victoires (${Math.round(bW/total*100)}%) | Série max: ${streakB} consécutives
+- Égalités: ${ties} (${Math.round(ties/total*100)}%)
+- Naturelles: ${nats} (${Math.round(nats/total*100)}%)
+
+DERNIÈRES 10 MAINS:\n${last10}`;
+  }
+
+  return `Tu es un analyste expert en jeux de pari virtuel. Analyse cet historique du jeu ${name} et génère exactement 3 pronostics pour les prochains résultats.
+
+${histText}
+
+${isPenalty ? '⚠️ RÈGLE ABSOLUE : Dans ce jeu, il n\'y a JAMAIS d\'égalité possible. Ne propose JAMAIS "Égalité" comme pronostic. Prédit TOUJOURS une équipe gagnante spécifique.' : ''}
+
+Réponds UNIQUEMENT en JSON valide (sans backticks markdown, sans aucun texte avant ou après), format exact :
+{
+  "pronostics": [
+    {
+      "titre": "Titre court et percutant",
+      "prediction": "Prédiction précise et spécifique",
+      "confiance": 63,
+      "raisonnement": "Explication basée sur les vraies tendances observées dans les données (2-3 phrases).",
+      "tags": ["TENDANCE", "SÉRIE"],
+      "horizon": "Prochain résultat"
+    }
+  ]
+}
+
+Règles :
+- confiance entre 52 et 72 (réaliste pour des jeux de hasard/virtuel)
+- Base-toi uniquement sur les tendances réelles visibles dans les données
+- tags: 1-2 parmi TENDANCE, SÉRIE, FORME, DOMINATION, PRUDENCE, RETOURNEMENT, NATURELLE
+- Sois honnête — c'est du hasard, tes pronostics doivent refléter des probabilités observées`;
+}
+
+async function runAnalysis() {
+  const btn = document.getElementById('analyze-btn');
+  const container = document.getElementById('prono-container');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Analyse IA en cours...';
+  container.innerHTML = '';
+
+  const data = DATA[currentPronoGame];
+  if (data.length < 5) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Pas assez de données (minimum 5 résultats).<br><span style="font-size:11px;display:block;margin-top:8px">Lance le serveur et attends les données Telegram.</span></div>`;
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Relancer l\'analyse';
+    return;
+  }
+
+  const gameName = currentPronoGame === 'baccara' ? 'Baccara' :
+                   currentPronoGame === 'penalty18' ? 'FIFA Penalty 18' :
+                   currentPronoGame === 'penalty22' ? 'FIFA Penalty 22' :
+                   currentPronoGame === 'jeu21' ? 'Jeu 21' : 'FIFA 4×4';
+  const prompt = buildPrompt(currentPronoGame, data);
+
+  // Fonction helper qui tente l'appel et retourne { ok, data, error }
+  async function tryFetch(url, body) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(30000)
+      });
+      const json = await r.json();
+      if (!r.ok) return { ok: false, error: json.error || `HTTP ${r.status}` };
+      return { ok: true, data: json };
+    } catch(e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
+  try {
+    // 1) Tenter via le serveur local
+    let pronos = null;
+    const serverRes = await tryFetch(`${API}/analyze`, { prompt });
+
+    if (serverRes.ok) {
+      const d = serverRes.data;
+      let parsed;
+      if (d.raw) {
+        parsed = JSON.parse(d.raw.replace(/```json|```/g, '').trim());
+      } else if (d.pronostics) {
+        parsed = d;
+      } else {
+        throw new Error('Format de réponse serveur inattendu');
+      }
+      pronos = parsed.pronostics;
+    } else {
+      // 2) Serveur indisponible → appel direct Anthropic API
+      console.warn('[IA] Serveur local indisponible (' + serverRes.error + '), tentative directe...');
+      const directRes = await tryFetch('https://api.anthropic.com/v1/messages', {
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: prompt }]
+      });
+      if (directRes.ok) {
+        const text = (directRes.data.content || []).map(c => c.text || '').join('').replace(/```json|```/g, '').trim();
+        pronos = JSON.parse(text).pronostics;
+      } else {
+        // Affiche diagnostic complet
+        throw new Error(
+          `Serveur local: ${serverRes.error}\nAPI directe: ${directRes.error}\n\n` +
+          `→ Assure-toi que le serveur tourne :\nset ANTHROPIC_API_KEY=sk-ant-... && node server.js`
+        );
+      }
+    }
+
+    if (!pronos || !pronos.length) throw new Error('Aucun pronostic reçu');
+
+    container.innerHTML = pronos.map(p => {
+      const conf = p.confiance;
+      const confClass = conf >= 65 ? 'high' : conf >= 57 ? 'mid' : 'low';
+      const tagHtml = (p.tags||[]).map(tag =>
+        `<span class="prono-tag tag-${tag==='PRUDENCE'?'caution':tag==='SÉRIE'?'streak':'trend'}">${tag}</span>`
+      ).join('');
+      return `
+        <div class="prono-card">
+          <div class="prono-top">
+            <div>
+              <div class="prono-game-tag">🎮 ${gameName} · ${p.horizon||'Prochain résultat'}</div>
+              <div class="prono-prediction">${p.prediction}</div>
+            </div>
+            <div class="confidence-block">
+              <div class="confidence ${confClass}">${conf}%</div>
+              <div class="confidence-label">Confiance</div>
+            </div>
+          </div>
+          <div class="prono-bar-track">
+            <div class="prono-bar-fill" style="width:${conf}%"></div>
+          </div>
+          <div class="prono-reasoning">💡 ${p.raisonnement}</div>
+          ${tagHtml ? `<div class="prono-tags">${tagHtml}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    analysisHistory.unshift({ game: gameName, date: new Date().toLocaleString('fr-FR'), pronostics: pronos });
+    renderHistory();
+    showToast('Analyse générée ✨');
+
+  } catch (e) {
+    console.error('[runAnalysis]', e);
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px">Erreur d'analyse IA</div>
+        <div style="font-size:11px;font-family:monospace;color:var(--red);background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25);border-radius:8px;padding:12px;text-align:left;white-space:pre-wrap;word-break:break-all;max-width:420px;margin:0 auto 10px">${e.message}</div>
+        <div style="font-size:11px;color:var(--muted)">Ouvre la console (F12) pour les détails complets</div>
+      </div>`;
+    showToast('Erreur lors de l\'analyse', 'error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔍 Relancer l\'analyse';
+}
+
+// ══════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════
+function renderHistory() {
+  const container = document.getElementById('history-container');
+  if (!analysisHistory.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📁</div>Tes analyses précédentes apparaîtront ici</div>`;
+    return;
+  }
+  container.innerHTML = analysisHistory.slice(0, 10).map(h => `
+    <div class="history-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div class="history-title">🎮 ${h.game}</div>
+          <div class="history-date">📅 ${h.date}</div>
+        </div>
+        <div class="ai-badge" style="font-size:10px">🤖 IA</div>
+      </div>
+      ${h.pronostics.map(p => `
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:8px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">${p.prediction}</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:${p.confiance}%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:2px"></div>
+            </div>
+            <span style="font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent)">${p.confiance}%</span>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════
+function toggleTheme() {
+  const isDayMode = document.body.classList.toggle('day-mode');
+  document.getElementById('theme-toggle').classList.toggle('on', isDayMode);
+  document.getElementById('theme-icon').textContent  = isDayMode ? '☀️' : '🌙';
+  document.getElementById('theme-label').textContent = isDayMode ? 'Mode Jour' : 'Mode Nuit';
+  localStorage.setItem('hadar_theme', isDayMode ? 'day' : 'night');
+}
+(function() {
+  if (localStorage.getItem('hadar_theme') === 'day') {
+    document.body.classList.add('day-mode');
+    const t = document.getElementById('theme-toggle');
+    if (t) { t.classList.add('on'); document.getElementById('theme-icon').textContent='☀️'; document.getElementById('theme-label').textContent='Mode Jour'; }
+  }
+})();
+
+// ══════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════
+function updateClock() {
+  const n = new Date();
+  const pad = x => String(x).padStart(2,'0');
+  const el = document.getElementById('clock');
+  const de = document.getElementById('clock-date');
+  const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  if (el) el.textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  if (de) de.textContent = `${pad(n.getDate())} ${months[n.getMonth()]} ${n.getFullYear()}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ══════════════════════════════════════════
+// SIDE MENU
+// ══════════════════════════════════════════
+function openMenu() {
+  document.getElementById('side-menu').classList.add('open');
+  document.getElementById('menu-overlay').classList.add('open');
+}
+function closeMenu() {
+  document.getElementById('side-menu').classList.remove('open');
+  document.getElementById('menu-overlay').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// LIVE SERVER POLLING
+// ══════════════════════════════════════════
+let liveMode = false;
+let pollInterval = null;
+
+async function checkServer() {
+  try {
+    const res = await fetch(`${API}/status`, { signal: AbortSignal.timeout(3000) });
+    const data = await res.json();
+    if (data.status === 'online') {
+      liveMode = true;
+      setLiveIndicator(true);
+      startPolling();
+    }
+  } catch {
+    liveMode = false;
+    setLiveIndicator(false);
+    setTimeout(checkServer, 6000);
+  }
+}
+
+function setLiveIndicator(online) {
+  const badge = document.getElementById('live-badge');
+  if (!badge) return;
+  if (online) {
+    badge.style.cssText = 'background:rgba(0,229,160,0.12);border-color:rgba(0,229,160,0.3);color:var(--accent)';
+    badge.innerHTML = '<div class="live-dot" style="background:var(--accent)"></div> CONNECTÉ';
+  } else {
+    badge.style.cssText = 'background:rgba(255,77,109,0.12);border-color:rgba(255,77,109,0.3);color:var(--red)';
+    badge.innerHTML = '<div class="live-dot"></div> DÉMO';
+  }
+}
+
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(async () => {
+    try {
+      await fetchAndUpdate('baccara');
+      await fetchAndUpdate('penalty18');
+      await fetchAndUpdate('penalty22');
+      await fetchAndUpdate('jeu21');
+      await fetchAndUpdate('fifa4x4');
+    } catch {
+      liveMode = false;
+      setLiveIndicator(false);
+      clearInterval(pollInterval);
+      setTimeout(checkServer, 6000);
+    }
+  }, 3000);
+}
+
+async function fetchAndUpdate(game) {
+  const res = await fetch(`${API}/results/${game}`);
+  const data = await res.json();
+  if (!data || !data.length) return;
+  if (game === 'baccara') {
+    DATA.baccara = data.map(r => ({
+      n:           r.n,
+      player:      r.playerScore !== undefined ? r.playerScore : (r.player || 0),
+      banker:      r.bankerScore !== undefined ? r.bankerScore : (r.banker || 0),
+      playerCards: r.playerCards || '',
+      bankerCards: r.bankerCards || '',
+      total:       r.total || 0,
+      natural:     r.natural || false
+    }));
+  } else if (game === 'jeu21') {
+    DATA.jeu21 = data.map(r => ({
+      n:      r.n,
+      player: r.player !== undefined ? r.player : (r.playerScore || 0),
+      dealer: r.dealer !== undefined ? r.dealer : (r.bankerScore || 0),
+      result: r.result || (r.player > r.dealer ? 'WIN' : r.player < r.dealer ? 'LOSE' : 'PUSH')
+    }));
+  } else if (game === 'fifa4x4') {
+    // FIFA 4×4 uses same structure as penalty
+    DATA.fifa4x4 = data.map(r => ({
+      n:     r.n,
+      home:  r.home  || r.team1 || '—',
+      away:  r.away  || r.team2 || '—',
+      score: r.score || '0:0'
+    }));
+  } else {
+    DATA[game] = data.map(r => ({
+      n:     r.n,
+      home:  r.home  || '—',
+      away:  r.away  || '—',
+      score: r.score || '0:0'
+    }));
+  }
+  if (currentGame === game) renderResults();
+  if (currentStatGame === game) renderStats();
+}
+</script>
+<!-- PWA Install Banner -->
+<div id="pwa-banner" style="
+  display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,#111520,#181d2e); border:1px solid rgba(0,229,160,0.4);
+  border-radius:14px; padding:14px 18px; z-index:500; width:90%; max-width:380px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5); backdrop-filter:blur(10px);
+  display:none; align-items:center; gap:14px;
+">
+  <img src="icon-192.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0">
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:#e8eaf0;font-family:'Space Grotesk',sans-serif">Installer BetAnalytics</div>
+    <div style="font-size:11px;color:#5a6080;margin-top:2px;font-family:'Space Grotesk',sans-serif">Accès rapide depuis ton écran d'accueil</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-shrink:0">
+    <button onclick="installPWA()" style="
+      background:linear-gradient(135deg,#7b5ea7,#00e5a0); border:none; border-radius:8px;
+      color:#000; font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700;
+      padding:8px 14px; cursor:pointer;
+    ">Installer</button>
+    <button onclick="document.getElementById('pwa-banner').style.display='none'" style="
+      background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px; color:#5a6080; font-size:18px; padding:4px 8px; cursor:pointer;
+    ">✕</button>
+  </div>
+</div>
+
+<script>
+// ── Service Worker Registration ───────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then((reg) => {
+        console.log('[PWA] Service Worker enregistré:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('[PWA] Mise à jour disponible');
+              newWorker.postMessage('SKIP_WAITING');
+            }
+          });
+        });
+      })
+      .catch((err) => console.log('[PWA] Erreur SW:', err));
+  });
+}
+
+// ── PWA Install Prompt ────────────────────────────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Afficher la bannière après 3 secondes
+  setTimeout(() => {
+    const banner = document.getElementById('pwa-banner');
+    if (banner) banner.style.display = 'flex';
+  }, 3000);
+});
+
+function installPWA() {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.style.display = 'none';
+  if (!deferredPrompt) {
+    alert('Pour installer : clique sur les 3 points de Chrome → "Ajouter à l'écran d'accueil"');
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((choice) => {
+    console.log('[PWA] Choix utilisateur:', choice.outcome);
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] Application installée avec succès !');
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.style.display = 'none';
+  deferredPrompt = null;
+});
+</script>
+</body>
+</html>
