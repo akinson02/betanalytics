@@ -84,28 +84,25 @@ body {
   margin-bottom: 36px;
 }
 .landing-logo-icon {
-  width: 60px; height: 60px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
-  margin-bottom: 12px;
-  box-shadow: 0 0 40px rgba(0,229,160,0.25);
+  width: 280px;
+  max-width: 80vw;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 24px rgba(0,229,160,0.2));
 }
 .landing-logo-name {
-  font-size: 26px; font-weight: 800;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--text) 60%, var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 13px; font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 4px;
 }
 .landing-logo-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
   letter-spacing: 2px;
   text-transform: uppercase;
+  opacity: 0.6;
 }
 
 /* Promo card */
@@ -561,11 +558,11 @@ body {
   letter-spacing: -0.5px;
 }
 .app-logo-icon {
-  width: 34px; height: 34px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px;
+  height: 36px;
+  width: auto;
+  border-radius: 6px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(0,229,160,0.3));
 }
 .header-right { display: flex; align-items: center; gap: 8px; }
 
@@ -1120,7 +1117,7 @@ body {
   <!-- Header -->
   <header class="app-header">
     <div class="app-logo">
-      <div class="app-logo-icon">📊</div>
+      <img src="icon 001.jpg" alt="HADAR" class="app-logo-icon">
       <span>HADAR BetAnalytics</span>
     </div>
     <div class="header-right">
@@ -2186,7 +2183,7 @@ async function fetchAndUpdate(game) {
   box-shadow:0 8px 32px rgba(0,0,0,0.5); backdrop-filter:blur(10px);
   display:none; align-items:center; gap:14px;
 ">
-  <img src="icon-192.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0">
+  <img src="icon 001.jpg" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;object-fit:cover">
   <div style="flex:1">
     <div style="font-size:13px;font-weight:700;color:#e8eaf0;font-family:'Space Grotesk',sans-serif">Installer BetAnalytics</div>
     <div style="font-size:11px;color:#5a6080;margin-top:2px;font-family:'Space Grotesk',sans-serif">Accès rapide depuis ton écran d'accueil</div>
@@ -2206,7 +2203,11 @@ async function fetchAndUpdate(game) {
 
 <script>
 // ── Service Worker Registration ───────────────────────────────
-if ('serviceWorker' in navigator) {
+// Service Worker uniquement sur Railway (pas en prévisualisation)
+if ('serviceWorker' in navigator && 
+    !window.location.hostname.includes('claudeusercontent') &&
+    !window.location.hostname.includes('localhost') &&
+    window.location.protocol === 'https:') {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .then((reg) => {
@@ -2215,13 +2216,12 @@ if ('serviceWorker' in navigator) {
           const newWorker = reg.installing;
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[PWA] Mise à jour disponible');
               newWorker.postMessage('SKIP_WAITING');
             }
           });
         });
       })
-      .catch((err) => console.log('[PWA] Erreur SW:', err));
+      .catch((err) => console.warn('[PWA] SW non disponible:', err.message));
   });
 }
 
@@ -2242,7 +2242,7 @@ function installPWA() {
   const banner = document.getElementById('pwa-banner');
   if (banner) banner.style.display = 'none';
   if (!deferredPrompt) {
-    alert('Pour installer : clique sur les 3 points de Chrome → "Ajouter à l'écran d'accueil"');
+    alert("Pour installer: clique sur les 3 points de Chrome puis \"Ajouter à l'écran d'accueil\"");
     return;
   }
   deferredPrompt.prompt();
